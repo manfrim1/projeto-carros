@@ -1,9 +1,5 @@
 import 'dart:async';
-import 'dart:html';
 
-import 'package:carros/pages/carro/carro.dart';
-import 'package:carros/pages/carro/carros_bloc.dart';
-import 'package:carros/pages/carro/carros_listview.dart';
 import 'package:carros/pages/carros/carro.dart';
 import 'package:carros/pages/carros/carros_bloc.dart';
 import 'package:carros/pages/carros/carros_listview.dart';
@@ -32,7 +28,22 @@ class _CarrosPageState extends State<CarrosPage>
   @override
   bool get wantKeepAlive => true;
 
+  @override
+  void initState() {
+    super.initState();
 
+    _bloc.fetch(tipo);
+
+    // Escutando uma stream
+    final bus = EventBus.get(context);
+    subscription = bus.stream.listen((Event e){
+      print("Event $e");
+      CarroEvent carroEvent = e;
+      if(carroEvent.tipo == tipo) {
+        _bloc.fetch(tipo);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
